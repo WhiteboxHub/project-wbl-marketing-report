@@ -1,0 +1,19 @@
+# Environment variables (contains sensitive credentials)
+.env
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+myvenv/
+venv/
+env/
+
+# Auto-generated report preview
+preview_report.html
+
+# IDE files
+.vscode/
+.idea/
