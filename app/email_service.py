@@ -3,14 +3,16 @@ import os
 import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 from email.utils import formatdate, make_msgid
+from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-def send_report_email(html_content):
+def send_report_email(html_content, pdf_content=None):
     """
     Sends the HTML report to the configured recipient list using SMTP and App Password.
     Handles both Port 587 (TLS) and Port 465 (SSL) automatically.
@@ -28,7 +30,8 @@ def send_report_email(html_content):
     recipients = [r.strip() for r in recipients_raw.split(",") if r.strip()]
     
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = f"WBL Daily Marketing Report - {formatdate(localtime=False)}"
+    today_str = datetime.now().strftime('%B %d, %Y')
+    msg['Subject'] = f"WBL Daily Marketing Report - {today_str}"
     msg['From'] = f"WBL Marketing <{email_user}>"
     msg['To'] = ", ".join(recipients)
     msg['Date'] = formatdate(localtime=True)
@@ -41,6 +44,14 @@ def send_report_email(html_content):
     
     msg.attach(part1)
     msg.attach(part2)
+
+    # Attach PDF if provided
+    if pdf_content:
+        alias = datetime.now().strftime('%Y-%m-%d')
+        pdf_part = MIMEApplication(pdf_content, _subtype="pdf")
+        pdf_part.add_header('Content-Disposition', 'attachment', filename=f"Marketing_Report_{alias}.pdf")
+        msg.attach(pdf_part)
+        logger.info("PDF report attached to email.")
     
     try:
         logger.info(f"Attempting to send via {smtp_server}:{smtp_port}...")

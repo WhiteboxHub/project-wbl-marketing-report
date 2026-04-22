@@ -3,7 +3,7 @@ import time
 import os
 from datetime import datetime
 from app.api_client import fetch_report_data, get_due_schedules, lock_schedule, create_log
-from app.report_formatter import format_report_html
+from app.report_formatter import format_report_html, create_report_pdf
 from app.email_service import send_report_email
 
 # Configure logging
@@ -71,11 +71,12 @@ def run_orchestrated_report():
             if not data:
                 raise Exception("Could not get data from API.")
 
-            # 5. Format HTML
+            # 5. Format HTML and generate PDF
             html_content = format_report_html(data)
+            pdf_content = create_report_pdf(data)
 
             # 6. Dispatch Email
-            send_result = send_report_email(html_content)
+            send_result = send_report_email(html_content, pdf_content)
             if not send_result:
                 raise Exception("Email delivery failed.")
 
