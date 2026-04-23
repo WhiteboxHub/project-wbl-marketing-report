@@ -1,7 +1,6 @@
 from jinja2 import Template
 from datetime import datetime, timezone
 import io
-from xhtml2pdf import pisa
 
 def format_report_html(data):
     """
