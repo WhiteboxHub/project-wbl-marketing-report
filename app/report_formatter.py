@@ -27,7 +27,7 @@ def format_report_html(data):
         <div style="max-width: 1100px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); overflow: hidden;">
             
             <div style="background-color: #1f2937; color: #ffffff; padding: 30px; text-align: center;">
-                <h1 style="margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">Weekly Marketing Report</h1>
+                <h1 style="margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">Weekly Application Report</h1>
                 <p style="margin: 10px 0 0 0; font-size: 14px; color: #9ca3af;">{{ summary.start_date }}{% if summary.end_date %} &mdash; {{ summary.end_date }}{% endif %}</p>
                 {% if not is_pdf %}
                 <div style="margin-top: 15px;">

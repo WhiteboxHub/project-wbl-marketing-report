@@ -31,7 +31,7 @@ def send_report_email(html_content, pdf_content=None):
     
     msg = MIMEMultipart('alternative')
     today_str = datetime.now().strftime('%B %d, %Y')
-    msg['Subject'] = f"WBL Daily Marketing Report - {today_str}"
+    msg['Subject'] = f"WBL Weekly Application Report - {today_str}"
     msg['From'] = f"WBL Marketing <{email_user}>"
     msg['To'] = ", ".join(recipients)
     msg['Date'] = formatdate(localtime=True)
