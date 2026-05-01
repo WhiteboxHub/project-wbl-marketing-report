@@ -11,6 +11,21 @@ def format_report_html(data):
         
     candidates = data.get("candidates", [])
     summary = data.get("summary", {})
+    totals = {
+        "outreach": sum(int(c.get("outreach_count",0) or 0)for c in candidates),
+        "linkedin": sum(int(c.get("linkedin_easy_apply_count",0) or 0)for c in candidates),
+        "portal": sum(int(c.get("job_portal_automation_count",0) or 0) for c in candidates),
+        "clicks": sum(int(c.get("job_clicks",0) or 0)for c in candidates),
+        "assess": sum(int(c.get("assessment_count", 0)or 0) for c in candidates),
+        "recruiter": sum(int(c.get("recruiter_call_count",0) or 0)for c in candidates),
+        "tech": sum(int(c.get("technical_count",0) or 0) for c in candidates),
+        "onsite": sum(int(c.get("onsite_count",0) or 0) for c in candidates),
+        "interviews": sum(int(c.get("total_interviews",0)or 0)for c in candidates),
+        "pos": sum(int(c.get("feedback_positive",0) or 0) for c in candidates),
+        "neg": sum(int(c.get("feedback_negative",0)or 0)for c in candidates),
+        "pend": sum(int(c.get("feedback_pending",0)or 0)for c in candidates),
+        
+    }
     now_str = datetime.now(timezone.utc).strftime('%B %d, %Y')
     
     # Final Comprehensive Template (Full Detail)
@@ -58,6 +73,7 @@ def format_report_html(data):
                     <table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid #e2e8f0;">
                         <thead>
                             <tr>
+                                <th rowspan="2" style="background-color: #3b5998;">S.No</th>
                                 <th rowspan="2" style="background-color: #3b5998;">Candidate</th>
                                 <th colspan="4" style="background-color: #4d71bb;">APPLICATIONS</th>
                                 <th colspan="4" style="background-color: #6d8acb;">INTERVIEWS</th>
@@ -66,11 +82,11 @@ def format_report_html(data):
                             </tr>
                             <tr style="background-color: #f0f4f8; color: #334e81; font-size: 8px;">
                                 <th style="color: #334e81; background-color: #f0f4f8;">EMAIL OUTREACH</th>
-                                <th style="color: #334e81; background-color: #f0f4f8;">LINKEDIN EA</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">LINKEDIN EASY APPLY</th>
                                 <th style="color: #334e81; background-color: #f0f4f8;">PORTAL AUTO</th>
                                 <th style="color: #334e81; background-color: #f0f4f8;">CLICKS</th>
-                                <th style="color: #334e81; background-color: #f0f4f8;">ASSESS</th>
-                                <th style="color: #334e81; background-color: #f0f4f8;">RECRUIT</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">ASSESSMENT</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">RECRUITER</th>
                                 <th style="color: #334e81; background-color: #f0f4f8;">TECH</th>
                                 <th style="color: #334e81; background-color: #f0f4f8;">ONSITE</th>
                                 <th style="color: #16a34a; background-color: #f0f4f8;">POS</th>
@@ -81,22 +97,63 @@ def format_report_html(data):
                         <tbody>
                             {% for c in candidates %}
                             <tr style="background-color: {{ '#ffffff' if loop.index0 % 2 == 0 else '#f8fafc' }};">
+                                <td style="text-align: center; font-weight:600;">{{loop.index}}</td>
                                 <td style="text-align: left; font-weight: 600; padding-left: 10px;">{{ c.full_name }}</td>
-                                <td>{{ c.outreach_count or '0' }}</td>
-                                <td>{{ c.linkedin_easy_apply_count or '0' }}</td>
-                                <td>{{ c.job_portal_automation_count or '0' }}</td>
-                                <td style="color: #ea580c; font-weight: bold;">{{ c.job_clicks or '0' }}</td>
-                                <td>{{ c.assessment_count or '0' }}</td>
-                                <td>{{ c.recruiter_call_count or '0' }}</td>
-                                <td>{{ c.technical_count or '0' }}</td>
-                                <td>{{ c.onsite_count or '0' }}</td>
-                                <td style="background-color: #ecfdf5; font-weight: 800;">{{ c.total_interviews or '0' }}</td>
-                                <td style="color: #16a34a; font-weight: bold;">{{ c.feedback_positive or '0' }}</td>
-                                <td style="color: #ef4444; font-weight: bold;">{{ c.feedback_negative or '0' }}</td>
-                                <td style="color: #d97706; font-weight: bold;">{{ c.feedback_pending or '0' }}</td>
+                                <td>{{ c.outreach_count or '-' }}</td>
+                                <td>{{ c.linkedin_easy_apply_count or '-' }}</td>
+                                <td>{{ c.job_portal_automation_count or '-' }}</td>
+                                <td style="color: #ea580c; font-weight: bold;">{{ c.job_clicks or '-' }}</td>
+                                <td>{{ c.assessment_count or '-' }}</td>
+                                <td>{{ c.recruiter_call_count or '-' }}</td>
+                                <td>{{ c.technical_count or '-' }}</td>
+                                <td>{{ c.onsite_count or '-' }}</td>
+                                <td style="background-color: #ecfdf5; font-weight: 800;">{{ c.total_interviews or '-' }}</td>
+                                <td style="color: #16a34a; font-weight: bold;">{{ c.feedback_positive or '-' }}</td>
+                                <td style="color: #ef4444; font-weight: bold;">{{ c.feedback_negative or '-' }}</td>
+                                <td style="color: #d97706; font-weight: bold;">{{ c.feedback_pending or '-' }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
+                        <tfoot>
+                            <tr style="background-color: #123359; color: #ffffff; font-weight: 800; font-size: 10px;">
+                              <td style="text-align: center; letter-spacing: 1px;">Total</td>
+                              <td style="text-align: center; font-weight: 800;">{{candidates|length}}</td>
+                              <td>{{totals.outreach or '-'}}</td>
+                              <td>{{totals.linkedin or '-'}}</td>
+                              <td>{{totals.portal or '-'}}</td>
+                              <td style="color: #fb923c;">{{totals.clicks or '-'}}</td>
+                              <td>{{totals.assess or '-'}}</td>
+                              <td>{{totals.recruiter or '-'}}</td>
+                              <td>{{totals.tech if totals.tech>0 else '-'}}</td>
+                              <td>{{totals.onsite if totals.onsite>0 else '-'}}</td>
+                              <td style="background-color: #064e3b;">{{totals.interviews or '-'}}</td>
+                              <td style="color: #4ade80;">{{totals.pos or '-'}}</td>
+                              <td style="color: #f87171;">{{totals.neg or '-'}}</td>
+                              <td style="color: #fbbf24;">{{totals.pend or '-'}}</td>
+                            </tr>
+                               <tr style="background-color: #f0f4f8; color: #334e81; font-size: 8px;">
+                               <th rowspan="2" style="background-color: #3b5998; color: #ffffff; vertical-align: middle;">S.No</th>
+                               <th rowspan="2" style="background-color:#3b5998; color: #ffffff; vertical-align:middle;">Candidate</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">EMAIL OUTREACH</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">LINKEDIN EASY APPLY</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">PORTAL AUTO</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">CLICKS</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">ASSESSMENT</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">RECRUITER</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">TECH</th>
+                                <th style="color: #334e81; background-color: #f0f4f8;">ONSITE</th>
+                                <th rowspan="2" style="background-color:#38ada9; color: #ffffff; vertical-align:middle;">Total</th> 
+                                <th style="color: #16a34a; background-color: #f0f4f8;">POS</th>
+                                <th style="color: #ef4444; background-color: #f0f4f8;">NEG</th>
+                                <th style="color: #d97706; background-color: #f0f4f8;">PEND</th>
+                            </tr>
+                                <tr style="color: #ffffff; font-size: 8px;">
+                                <th colspan="4" style="background-color: #4d71bb;">APPLICATIONS</th>
+                                <th colspan="4" style="background-color: #6d8acb;">INTERVIEWS</th>
+                                <th colspan="3" style="background-color: #8da3dc;">FEEDBACK</th>
+                            </tr>
+
+                       </tfoot>
                     </table>
                 </div>
             </div>
@@ -114,15 +171,8 @@ def format_report_html(data):
     return template.render(
         candidates=candidates, 
         summary=summary,
-        now_str=now_str
-    )
-    
-    template = Template(template_html)
-    return template.render(
-        candidates=candidates, 
-        summary=summary,
         now_str=now_str,
-        is_pdf=False
+        totals=totals
     )
 
 def create_report_pdf(data):
